@@ -1,7 +1,8 @@
 import re
 
 class FindPassword:
-    def __init__(self, puzzle):
+    def __init__(self, puzzle, method='standard'):
+        self.method = method
         self.puzzle = puzzle
         self._dialPointer = 50
         self._password = 0
@@ -16,6 +17,20 @@ class FindPassword:
             print(f"Turning the knob Right {count} times\nPosition at: {self._dialPointer}\n")
         else: 
             raise ValueError("direction must be either L or R")
+        
+    def _countZeroHits(self, direction, count):
+        if direction == 'L':
+            for step in range(count):
+                step = 1
+                self._dialPointer = (self._dialPointer + step) % 100
+                if self._dialPointer == 0:
+                    self._password += 1
+        elif direction == 'R':
+            for step in range(count):
+                step = -1
+                self._dialPointer = (self._dialPointer + step) % 100
+                if self._dialPointer == 0:
+                    self._password += 1
 
     def split_input(self, line):
         match = re.match(r"([RL])(\d+)$", line)
@@ -25,8 +40,13 @@ class FindPassword:
     def calculatePassword(self):
         for line in self.puzzle:
             direction, count = self.split_input(line)
-            self._calculateDialPointer(direction, count)
-            if self._dialPointer == 0:
-                self._password += 1
+            
+            if self.method == '0x434C49434B':
+                self._countZeroHits(direction, count)
+
+            elif self.method == 'standard':
+                self._calculateDialPointer(direction, count)
+                if self._dialPointer == 0:
+                    self._password += 1
         return f"The secret Password is: {self._password}"
     
