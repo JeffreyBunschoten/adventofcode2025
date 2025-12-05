@@ -9,5 +9,5 @@ puzzle = PuzzleInput('/home/jeff/Documents/projects/adventOfCode/2025/day3/puzzl
 # print(puzzle.content)
 
 output = MaxJoltage(puzzle.content)
-maxJoltage = output.findMaxJoltage()
-print(maxJoltage)
+# maxJoltage = output.findMaxJoltage()
+print(output.solve(2))

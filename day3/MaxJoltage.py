@@ -2,27 +2,35 @@ class MaxJoltage:
     def __init__(self, puzzle):
         self.puzzle = puzzle
 
-    def findMaxJoltage(self):
-        total_joltage = 0
-        for battery in self.puzzle:
-            digits = [int(digit) for digit in battery]
-            
-            # Find the two largest digits
-            largest_digit = max(digits)
-            index_largest = digits.index(largest_digit) # Keep the indexcount for startposition secondnumber
-            digits.remove(largest_digit)
-            
-            # From left to right scanning
-            try:
-                second_largest_digit = max(digits[index_largest:])  # Find the second largest digit
-                joltage = int(f"{largest_digit}{second_largest_digit}")
-                total_joltage += joltage
+    def findMaxJoltage(self, digits, picks):
+        """
+        Choose `picks` digits from `digits` (string of digits), preserving order,
+        that form the lexicographically largest possible number.
+        """
+        digits = list(map(int, digits))
+        n = len(digits)
+        chosen = []
+        start = 0
 
-            # Flip the list around if the largest N is at the end (from R to L)
-            except ValueError as err:
-                second_largest_digit = max(digits[-index_largest:])
-                joltage = int(f"{second_largest_digit}{largest_digit}")
-                total_joltage += joltage
-        
-        return total_joltage
+        for _ in range(picks):
+            remaining_picks = picks - len(chosen)
+            max_index = n - remaining_picks
+
+            best_digit = -1
+            best_pos = -1
+            for i in range(start, max_index + 1):
+                if digits[i] > best_digit:
+                    best_digit = digits[i]
+                    best_pos = i
+
+            chosen.append(best_digit)
+            start = best_pos + 1 # Next digit to pick to the right always
+
+        return int("".join(map(str, chosen)))
+    
+    def solve(self, picks):
+        total = 0
+        for line in self.puzzle:
+            total += self.findMaxJoltage(line.strip(), picks)
+        return total
     
